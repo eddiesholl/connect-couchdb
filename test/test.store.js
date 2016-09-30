@@ -243,4 +243,35 @@ describe('db', function () {
       });
     });
   });
+
+  it("generates a conflict by default", function(done) {
+     var opts = global_opts;
+     opts.ignoreConflicts = false;
+     opts.name = 'connect-couch-conflict-ignore';
+     var store = new ConnectCouchDB(opts);
+     store.setup(opts, function(err, res) {
+         assert.ok(!err);
+         store.set('123', { cookie: { maxAge: 2000 }, a: 1 });
+         store.set('123', { cookie: { maxAge: 2000 }, a: 2 }, (err, res) => {
+             assert.equal(err.reason, 'Document update conflict.');
+             done();
+         });
+       });
+     });
+
+
+  it("can ignore conflicts", function(done) {
+   var opts = global_opts;
+   opts.ignoreConflicts = true;
+   opts.name = 'connect-couch-conflict-ignore';
+   var store = new ConnectCouchDB(opts);
+   store.setup(opts, function(err, res) {
+       assert.ok(!err);
+       store.set('456', { cookie: { maxAge: 2000 }, a: 1 });
+       store.set('456', { cookie: { maxAge: 2000 }, a: 2 }, (err, res) => {
+           assert.ok(!err, reason(err));
+           done();
+       });
+   });
+ });
 });

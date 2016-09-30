@@ -48,7 +48,13 @@ Via npm:
 
       // Optional. How many time between two identical session store
       // Defaults to 60000 (1 minute)
-      setThrottle: 60000
+      setThrottle: 60000,
+
+      // Optional. Rapid parallel sets may result in a conflict.
+      // For non-trivial data, you probably don't want to ignore these
+      // For simple session tracking, it may be safe to ignore conflicts
+      // Defaults to false
+      ignoreConflicts: true
     });
     var server = connect();
     server.use(session({secret: 'YourSecretKey', store: store });
